@@ -89,10 +89,25 @@ func (a App) ImportFeeds() []db.Feed {
 // If you wish to fecth update for a single RSS Feed
 // consider using FetchUpdates()
 func (a App) FetchUpdatesForAllFeeds() {
-
+	db.FetchUpdatesForAllFeeds()
 }
 
 // Fetch updates for a single RSS Feed
 func (a App) FetchUpdates(feedId int64) {
+	db.FetchUpdates(feedId)
+}
 
+// Star/Unstar a post
+func (a App) SetStarred(postId int64, starred bool) {
+	db.SetStarred(postId, starred)
+}
+
+// Pin/Unpin a feed
+func (a App) SetPinned(feedId int64, pinned bool) {
+	db.SetPinned(feedId, pinned)
+}
+
+// Unsubscribe a feed
+func (a App) UnsubscribeFeed(feedId int64) {
+	db.UnsubscribeFeed(feedId)
 }

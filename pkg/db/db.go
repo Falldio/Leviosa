@@ -79,3 +79,44 @@ func GetPost(postId int64) Post {
 	dbm.SelectOne(&post, "select * from posts where id = ?", postId)
 	return post
 }
+
+func FetchUpdatesForAllFeeds() {
+	var feeds []Feed
+	dbm.Select(&feeds, "select id, url from feeds")
+	for _, f := range feeds {
+		fd, _ := fp.ParseURL(f.Url)
+		newPosts(fd, f.Id)
+	}
+}
+
+func FetchUpdates(feedId int64) {
+	feed := Feed{}
+	dbm.SelectOne(&feed, "select url from feeds where id = ?", feedId)
+	fd, _ := fp.ParseURL(feed.Url)
+	newPosts(fd, feedId)
+}
+
+func SetStarred(postId int64, starred bool) {
+	post := Post{}
+	dbm.SelectOne(&post, "select * from posts where id = ?", postId)
+	post.Starred = starred
+	dbm.Update(&post)
+}
+
+func SetPinned(feedId int64, pinned bool) {
+	feed := Feed{}
+	dbm.SelectOne(&feed, "select * from feeds where id = ?", feedId)
+	feed.Pinned = pinned
+	dbm.Update(&feed)
+}
+
+func UnsubscribeFeed(feedId int64) {
+	feed := Feed{}
+	dbm.SelectOne(&feed, "select * from feeds where id = ?", feedId)
+	dbm.Delete(&feed)
+	posts := []Post{}
+	dbm.Select(&posts, "select * from posts where feed_id = ?", feedId)
+	for _, p := range posts {
+		dbm.Delete(&p)
+	}
+}

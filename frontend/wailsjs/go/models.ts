@@ -8,7 +8,6 @@ export namespace db {
 	    image: string;
 	    updated: number;
 	    created: number;
-	    unread: number;
 	    pinned: number;
 	
 	    static createFrom(source: any = {}) {
@@ -24,7 +23,6 @@ export namespace db {
 	        this.image = source["image"];
 	        this.updated = source["updated"];
 	        this.created = source["created"];
-	        this.unread = source["unread"];
 	        this.pinned = source["pinned"];
 	    }
 	}

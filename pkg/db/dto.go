@@ -25,7 +25,7 @@ type Feed struct {
 	Updated     int64  `db:"updated" json:"updated"`
 	Created     int64  `db:"created" json:"created"`
 	Unread      int64  `db:"-"`
-	Pinned      int64  `db:"pinned" json:"pinned"`
+	Pinned      bool   `db:"pinned" json:"pinned"`
 }
 
 // A Post always belongs to a certain RSS Feed.
