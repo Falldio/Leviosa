@@ -1,0 +1,39 @@
+:deep(img) {
+    max-width: 100%;
+}
+
+:deep(h1) {
+    text-align: start;
+}
+
+:deep(div) {
+    text-align: start;
+}
+
+:deep(p) {
+    margin: 0 0 0.8rem;
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+
+:deep(hr) {
+    background-image: repeating-linear-gradient(-45deg, var(--grey-3), var(--grey-4) 0.25rem, transparent 0.25rem, transparent 0.5rem);
+    border: none;
+    height: 0.125rem;
+    margin: 1.5rem 0;
+    box-sizing: content-box;
+    height: 0;
+    overflow: visible;
+}
+
+:deep(a) {
+    color: #5c92ff;
+    text-decoration: none;
+}
+
+:deep(ol) {
+    margin: 0 0 1.5em 3em;
+}
