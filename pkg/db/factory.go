@@ -1,14 +1,18 @@
 package db
 
 import (
-	"log"
 	"time"
+
+	"Leviosa/pkg/log"
 
 	"github.com/mmcdole/gofeed"
 )
 
 func newFeed(fd *gofeed.Feed) Feed {
 	feed := &Feed{}
+	if fd == nil {
+		return *feed
+	}
 	feed.Url = fd.FeedLink
 	feed.Title = fd.Title
 	feed.Description = fd.Description
@@ -19,15 +23,23 @@ func newFeed(fd *gofeed.Feed) Feed {
 		feed.Updated = fd.UpdatedParsed.UnixMicro()
 	}
 	feed.Created = time.Now().UnixMicro()
+
 	err := dbm.Insert(feed)
 	if err != nil {
-		log.Println("Feed already exists")
+		log.Logger.Info(err.Error())
+		_, err = dbm.Update(feed)
+		if err != nil {
+			log.Logger.Error(err.Error())
+		}
 		return Feed{}
 	}
 	return *feed
 }
 
 func newPosts(feed *gofeed.Feed, feedId int64) []Post {
+	if feed == nil {
+		return []Post{}
+	}
 	var posts []Post
 	for _, item := range feed.Items {
 		post := &Post{
@@ -49,7 +61,7 @@ func newPosts(feed *gofeed.Feed, feedId int64) []Post {
 		post.Author = author
 		err := dbm.Insert(post)
 		if err != nil {
-			log.Println("Post already exists")
+			log.Logger.Info(err.Error())
 			post.Read = true
 		}
 		posts = append(posts, *post)

@@ -1,8 +1,8 @@
 package db
 
 import (
+	"Leviosa/pkg/log"
 	"database/sql"
-	"log"
 	"os"
 	"sort"
 
@@ -38,7 +38,7 @@ func InitDb() *gorp.DbMap {
 
 	err = dbm.CreateIndex()
 	if err != nil {
-		log.Println("Index already exists")
+		log.Logger.Info(err.Error())
 	}
 
 	return dbm
@@ -84,7 +84,10 @@ func FetchUpdatesForAllFeeds() {
 	var feeds []Feed
 	dbm.Select(&feeds, "select id, url from feeds")
 	for _, f := range feeds {
-		fd, _ := fp.ParseURL(f.Url)
+		fd, err := fp.ParseURL(f.Url)
+		if err != nil {
+			log.Logger.Error(err.Error())
+		}
 		newPosts(fd, f.Id)
 	}
 }

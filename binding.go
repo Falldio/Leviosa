@@ -21,6 +21,7 @@ import (
 	"os"
 
 	"Leviosa/pkg/db"
+	"Leviosa/pkg/log"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -53,7 +54,9 @@ func (a App) ExportFeeds() {
 		CanCreateDirectories: true,
 	}
 	exportPath, err := runtime.SaveFileDialog(a.ctx, options)
-	checkErr(err, "Failed to open file dialog")
+	if err != nil {
+		log.Logger.Error(err.Error())
+	}
 	if exportPath == "" {
 		return
 	}
@@ -69,18 +72,19 @@ func (a App) ImportFeeds() []db.Feed {
 		Filters: []runtime.FileFilter{{DisplayName: "JSON Files (*.json)", Pattern: "*.json;*.JSON"}},
 	}
 	importPath, err := runtime.OpenFileDialog(a.ctx, options)
-	checkErr(err, "Failed to open file dialog")
+	if err != nil {
+		log.Logger.Error(err.Error())
+	}
 	if importPath == "" {
 		return []db.Feed{}
 	}
 	file, err := os.ReadFile(importPath)
-	checkErr(err, "Failed to open file")
+	log.Logger.Error(err.Error())
 	var feeds []db.Feed
 	err = json.Unmarshal(file, &feeds)
-	checkErr(err, "Failed to unmarshal feeds")
+	log.Logger.Error(err.Error())
 	for _, feed := range feeds {
 		db.AddRSSFeed(feed.Url)
-		checkErr(err, "Failed to insert feeds")
 	}
 	return feeds
 }

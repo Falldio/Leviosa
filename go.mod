@@ -27,7 +27,7 @@ require (
 	github.com/leaanthony/slicer v1.5.0 // indirect
 	github.com/lib/pq v1.10.7 // indirect
 	github.com/mattn/go-colorable v0.1.11 // indirect
-	github.com/mattn/go-isatty v0.0.14 // indirect
+	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/mmcdole/goxpp v0.0.0-20200921145534-2f3784f67354 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
@@ -35,6 +35,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/poy/onpar v1.1.2 // indirect
 	github.com/samber/lo v1.27.1 // indirect
+	github.com/stretchr/testify v1.8.2 // indirect
 	github.com/tkrajina/go-reflector v0.5.5 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
