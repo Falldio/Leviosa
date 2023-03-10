@@ -1,6 +1,8 @@
 package main
 
 import (
+	"Leviosa/pkg/db"
+	"Leviosa/pkg/log"
 	"embed"
 
 	"github.com/wailsapp/wails/v2"
@@ -14,11 +16,19 @@ var assets embed.FS
 func main() {
 	// Create an instance of the app structure
 	app := NewApp()
+
+	log.InitLogger()
+	log.Logger.Info("Now running Leviosa!")
+
+	dbm := db.InitDb()
+	defer dbm.Db.Close()
+	go db.FetchUpdatesForAllFeeds()
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:  "Leviosa",
-		Width:  1024,
-		Height: 768,
+		Title:            "Leviosa",
+		WindowStartState: options.WindowStartState(1),
+		Width:            1280,
+		Height:           1024,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
@@ -28,8 +38,8 @@ func main() {
 			app,
 		},
 	})
-
 	if err != nil {
+		log.Logger.Error(err.Error())
 		println("Error:", err.Error())
 	}
 
