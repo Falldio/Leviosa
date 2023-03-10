@@ -8,7 +8,7 @@ export namespace db {
 	    image: string;
 	    updated: number;
 	    created: number;
-	    pinned: number;
+	    pinned: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Feed(source);

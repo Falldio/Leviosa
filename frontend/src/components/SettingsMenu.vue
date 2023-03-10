@@ -1,17 +1,15 @@
 <template>
-    <div>
-        <v-menu location="end">
-            <template v-slot:activator="{ props }">
-                <v-list-item v-bind="props" prepend-icon="mdi-cog" title="Settings" value="settings"></v-list-item>
-            </template>
-            <v-list>
-                <v-list-item v-for="(item, index) in items" :key="index" :value="index" @click-once="handleClick(index)">
-                    <v-list-item-title>{{ item.name }}</v-list-item-title>
-                </v-list-item>
-            </v-list>
-        </v-menu>
-        <add-r-s-s-feed-dialog v-model="store.state.addRSSFeedDialog"></add-r-s-s-feed-dialog>
-    </div>
+    <v-menu location="end">
+        <template v-slot:activator="{ props }">
+            <v-list-item density="compact" v-bind="props" prepend-icon="mdi-cog" title="Settings" value="settings"></v-list-item>
+        </template>
+        <v-list>
+            <v-list-item v-for="(item, index) in items" :key="index" :value="index" @click-once="handleClick(index)">
+                <v-list-item-title>{{ item.name }}</v-list-item-title>
+            </v-list-item>
+        </v-list>
+    </v-menu>
+    <add-r-s-s-feed-dialog v-model="store.state.addRSSFeedDialog"></add-r-s-s-feed-dialog>
 </template>
 
 <script lang="ts" setup>

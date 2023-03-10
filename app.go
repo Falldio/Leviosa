@@ -1,9 +1,7 @@
 package main
 
 import (
-	"Leviosa/pkg/db"
 	"context"
-	"log"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -22,11 +20,4 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
-	db.InitDb()
-}
-
-func checkErr(err error, msg string) {
-	if err != nil {
-		log.Fatalln(msg, err)
-	}
 }

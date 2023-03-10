@@ -33,3 +33,15 @@ export function GetPosts(arg1) {
 export function ImportFeeds() {
   return window['go']['main']['App']['ImportFeeds']();
 }
+
+export function SetPinned(arg1, arg2) {
+  return window['go']['main']['App']['SetPinned'](arg1, arg2);
+}
+
+export function SetStarred(arg1, arg2) {
+  return window['go']['main']['App']['SetStarred'](arg1, arg2);
+}
+
+export function UnsubscribeFeed(arg1) {
+  return window['go']['main']['App']['UnsubscribeFeed'](arg1);
+}

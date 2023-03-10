@@ -17,3 +17,9 @@ export function GetPost(arg1:number):Promise<db.Post>;
 export function GetPosts(arg1:number):Promise<Array<db.Post>>;
 
 export function ImportFeeds():Promise<Array<db.Feed>>;
+
+export function SetPinned(arg1:number,arg2:boolean):Promise<void>;
+
+export function SetStarred(arg1:number,arg2:boolean):Promise<void>;
+
+export function UnsubscribeFeed(arg1:number):Promise<void>;

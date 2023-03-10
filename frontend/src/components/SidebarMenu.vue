@@ -1,14 +1,5 @@
 <template>
-    <v-navigation-drawer id="sidebar-menu" v-model="drawer" :rail="rail" :disable-resize-watcher="disableResizeWatcher"
-        permanent>
-        <v-list density="compact" nav>
-        </v-list>
-        <template v-slot:append>
-            <v-list density="compact" nav>
-                <settings-menu></settings-menu>
-            </v-list>
-        </template>
-    </v-navigation-drawer>
+    <primary-sidebar></primary-sidebar>
     <v-navigation-drawer permanent>
         <v-list lines="two">
             <feed-entry v-for="item in items" :key="item.id" :feed="item" />
@@ -17,9 +8,9 @@
 </template>
 
 <script lang='ts' setup>
-import SettingsMenu from "./SettingsMenu.vue"
+import PrimarySidebar from "./PrimarySidebar.vue"
 import FeedEntry from "./FeedEntry.vue"
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useStore } from 'vuex'
 
 const store = useStore()
@@ -35,10 +26,6 @@ const items = computed(() => {
     })
 })
 
-const drawer = ref(true)
-const disableResizeWatcher = ref(true)
-const rail = ref(true)
-
 </script>
 
 <style lang="scss" scoped>
@@ -48,5 +35,9 @@ const rail = ref(true)
 
 .v-btn::before {
     background-color: transparent;
+}
+
+.left-align {
+    text-align: left;
 }
 </style>
