@@ -22,7 +22,7 @@ func main() {
 
 	dbm := db.InitDb()
 	defer dbm.Db.Close()
-	go db.FetchUpdatesForAllFeeds()
+	// go db.FetchUpdatesForAllFeeds()
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:            "Leviosa",
