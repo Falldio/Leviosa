@@ -79,10 +79,14 @@ func (a App) ImportFeeds() []db.Feed {
 		return []db.Feed{}
 	}
 	file, err := os.ReadFile(importPath)
-	log.Logger.Error(err.Error())
+	if err != nil {
+		log.Logger.Error(err.Error())
+	}
 	var feeds []db.Feed
 	err = json.Unmarshal(file, &feeds)
-	log.Logger.Error(err.Error())
+	if err != nil {
+		log.Logger.Error(err.Error())
+	}
 	for _, feed := range feeds {
 		db.AddRSSFeed(feed.Url)
 	}
