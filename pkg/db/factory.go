@@ -51,6 +51,9 @@ func newPosts(feed *gofeed.Feed, feedId int64) []Post {
 			Read:        false,
 			Starred:     false,
 		}
+		if post.Content == "" {
+			post.Content = post.Description
+		}
 		if item.UpdatedParsed != nil {
 			post.Updated = item.UpdatedParsed.UnixMicro()
 		}
