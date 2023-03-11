@@ -17,7 +17,6 @@ func main() {
 	// Create an instance of the app structure
 	app := NewApp()
 
-	log.InitLogger()
 	log.Logger.Info("Now running Leviosa!")
 
 	dbm := db.InitDb()

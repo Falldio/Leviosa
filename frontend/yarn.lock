@@ -13,14 +13,14 @@
   integrity sha512-awrNfaMtnHUr653GgGEs++LlAvW6w+DcPrOliSMXWCKo597CwL5Acf/wWdNkf/tfEQE3mjkeD1YOVZOUV/od1w==
 
 "@babel/parser@^7.16.4":
-  version "7.20.15"
-  resolved "https://registry.npmjs.org/@babel/parser/-/parser-7.20.15.tgz"
-  integrity sha512-DI4a1oZuf8wC+oAJA9RW6ga3Zbe8RZFt7kD9i4qAspz3I/yHet1VvC3DiSy/fsUvv5pvJuNPh0LPOdCcqinDPg==
+  version "7.21.2"
+  resolved "https://registry.npmjs.org/@babel/parser/-/parser-7.21.2.tgz"
+  integrity sha512-URpaIJQwEkEC2T9Kn+Ai6Xe/02iNaVCuT/PtoRz3GPVJVDpPd7mLo+VddTbhCRU9TXqW5mSrQfXZyi8kDKOVpQ==
 
 "@babel/types@^7.18.10":
-  version "7.20.7"
-  resolved "https://registry.npmjs.org/@babel/types/-/types-7.20.7.tgz"
-  integrity sha512-69OnhBxSSgK0OzTJai4kyPDiKTIe3j+ctaHdIGVbRahTLAT7L3R9oeXHC2aVSuGYt3cVnoAMDmOCgJ2yaiLMvg==
+  version "7.21.2"
+  resolved "https://registry.npmjs.org/@babel/types/-/types-7.21.2.tgz"
+  integrity sha512-3wRZSs7jiFaB8AjxiiD+VqN5DTG2iRvJGQ+qYFrs/654lg6kGTQWIOFjlBo5RaXuAZjBmP3+OQH4dmhqiiyYxw==
   dependencies:
     "@babel/helper-string-parser" "^7.19.4"
     "@babel/helper-validator-identifier" "^7.19.1"
@@ -393,9 +393,9 @@ rollup@^2.79.1:
     fsevents "~2.3.2"
 
 sass@*, sass@^1.58.1:
-  version "1.58.1"
-  resolved "https://registry.npmjs.org/sass/-/sass-1.58.1.tgz"
-  integrity sha512-bnINi6nPXbP1XNRaranMFEBZWUfdW/AF16Ql5+ypRxfTvCRTTKrLsMIakyDcayUt2t/RZotmL4kgJwNH5xO+bg==
+  version "1.58.3"
+  resolved "https://registry.npmjs.org/sass/-/sass-1.58.3.tgz"
+  integrity sha512-Q7RaEtYf6BflYrQ+buPudKR26/lH+10EmO9bBqbmPh/KeLqv8bjpTNqxe71ocONqXq+jYiCbpPUmQMS+JJPk4A==
   dependencies:
     chokidar ">=3.0.0 <4.0.0"
     immutable "^4.0.0"
@@ -484,9 +484,9 @@ vue@^3.2.0, vue@^3.2.25, vue@^3.2.47, vue@3.2.47:
     "@vue/shared" "3.2.47"
 
 vuetify@^3.1.5:
-  version "3.1.5"
-  resolved "https://registry.npmjs.org/vuetify/-/vuetify-3.1.5.tgz"
-  integrity sha512-6DJYNuKrbxuL+MThmj+VbtvK9X3mY+s8Rqj1juj4RyeLSIAhE3byZf8Bo2/GxrU5Jv3zR07LZdpiq4wIl0ONzA==
+  version "3.1.8"
+  resolved "https://registry.npmjs.org/vuetify/-/vuetify-3.1.8.tgz"
+  integrity sha512-yODCnRxERSvcBwC6qPiySVhmZzNZ2Yme6b2lNLY1G8W/hbipAtbTCFVGB4ZY/qY7D7JNQBxzgVfZme7bDY9ZrQ==
 
 vuex@^4.0.2:
   version "4.1.0"
