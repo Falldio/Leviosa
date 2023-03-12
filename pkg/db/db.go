@@ -11,12 +11,16 @@ import (
 	"strings"
 
 	"github.com/mmcdole/gofeed"
+	"go.deanishe.net/favicon"
 	"gopkg.in/gorp.v2"
 )
 
 var (
-	fp  *gofeed.Parser
-	dbm *gorp.DbMap
+	fp                  *gofeed.Parser
+	dbm                 *gorp.DbMap
+	proxyTransport      *http.Transport
+	iconFinder          *favicon.Finder
+	iconFinderWithProxy *favicon.Finder
 )
 
 const (
@@ -28,6 +32,14 @@ const (
 	SearchModeAnd = iota
 	SearchModeOr
 )
+
+func init() {
+	proxy, _ := url.Parse(config.Config.ProxyUrl)
+	proxyTransport = &http.Transport{Proxy: http.ProxyURL(proxy)}
+	proxyClient := &http.Client{Transport: proxyTransport}
+	iconFinderWithProxy = favicon.New(favicon.WithClient(proxyClient))
+	iconFinder = favicon.New()
+}
 
 func InitDb() *gorp.DbMap {
 	fp = gofeed.NewParser()
@@ -59,19 +71,9 @@ func InitDb() *gorp.DbMap {
 
 func AddRSSFeed(feedUrl string) Feed {
 	log.Logger.Debug("Adding feed: " + feedUrl)
-	var fd *gofeed.Feed
-	fd, err := fp.ParseURL(feedUrl)
-	if err != nil {
-		log.Logger.Error(err.Error())
-		log.Logger.Info("Retrying with proxy")
-		proxy, _ := url.Parse(config.Config.ProxyUrl)
-		fp.Client.Transport = &http.Transport{Proxy: http.ProxyURL(proxy)}
-		fd, err = fp.ParseURL(feedUrl)
-		fp.Client.Transport = nil
-		if err != nil {
-			log.Logger.Error(err.Error())
-			return Feed{}
-		}
+	fd := parseUrl(feedUrl)
+	if fd == nil {
+		return Feed{}
 	}
 	feed := newFeed(fd)
 	posts := newPosts(fd, feed.Id)
@@ -108,10 +110,8 @@ func FetchUpdatesForAllFeeds() {
 	var feeds []Feed
 	dbm.Select(&feeds, "select id, url from feeds")
 	for _, f := range feeds {
-		fd, err := fp.ParseURL(f.Url)
-		if err != nil {
-			log.Logger.Error(err.Error())
-		}
+		log.Logger.Debug("Fetching updates for feed: " + f.Url)
+		fd := parseUrl(f.Url)
 		newPosts(fd, f.Id)
 	}
 }
@@ -119,7 +119,8 @@ func FetchUpdatesForAllFeeds() {
 func FetchUpdates(feedId int64) {
 	feed := Feed{}
 	dbm.SelectOne(&feed, "select url from feeds where id = ?", feedId)
-	fd, _ := fp.ParseURL(feed.Url)
+	log.Logger.Debug("Fetching updates for feed: " + feed.Url)
+	fd := parseUrl(feed.Url)
 	newPosts(fd, feedId)
 }
 
@@ -189,4 +190,20 @@ func SearchFeedsByTags(mode int, tags ...string) []Feed {
 		dbm.Select(&feeds, "select f.* from feeds f, feed_tags ft where f.id = ft.feed_id and ft.tag_id in ("+strings.TrimRight(strings.Repeat("?,", len(tagIds)), ",")+") group by f.id", tagIds)
 	}
 	return feeds
+}
+
+func parseUrl(feedUrl string) *gofeed.Feed {
+	fd, err := fp.ParseURL(feedUrl)
+	if err != nil {
+		log.Logger.Error(err.Error())
+		log.Logger.Info("Retrying with proxy")
+		fp.Client.Transport = proxyTransport
+		fd, err = fp.ParseURL(feedUrl)
+		fp.Client.Transport = nil
+		if err != nil {
+			log.Logger.Error(err.Error())
+			return nil
+		}
+	}
+	return fd
 }

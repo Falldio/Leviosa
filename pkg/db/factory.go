@@ -18,6 +18,8 @@ func newFeed(fd *gofeed.Feed) Feed {
 	feed.Description = fd.Description
 	if fd.Image != nil {
 		feed.Image = fd.Image.URL
+	} else {
+		feed.Image = newImage(fd)
 	}
 	if fd.UpdatedParsed != nil {
 		feed.Updated = fd.UpdatedParsed.UnixMicro()
@@ -55,7 +57,7 @@ func newPosts(feed *gofeed.Feed, feedId int64) []Post {
 			post.Content = post.Description
 		}
 		if item.UpdatedParsed != nil {
-			post.Updated = item.UpdatedParsed.UnixMicro()
+			post.Updated = item.PublishedParsed.UnixMicro()
 		}
 		var author string = feed.Title
 		if item.Author != nil {
@@ -70,4 +72,20 @@ func newPosts(feed *gofeed.Feed, feedId int64) []Post {
 		posts = append(posts, *post)
 	}
 	return posts
+}
+
+func newImage(feed *gofeed.Feed) string {
+	if feed == nil || len(feed.Items) == 0 {
+		return ""
+	}
+	icons, err := iconFinder.Find(feed.Items[0].Link)
+	if err != nil || len(icons) == 0 {
+		log.Logger.Info("Retrying with proxy")
+		icons, err = iconFinderWithProxy.Find(feed.Items[0].Link)
+		if err != nil || len(icons) == 0 {
+			log.Logger.Info("Failed to find icon")
+			return ""
+		}
+	}
+	return icons[0].URL
 }
