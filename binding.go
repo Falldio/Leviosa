@@ -87,8 +87,8 @@ func (a App) ImportFeeds() []db.Feed {
 	if err != nil {
 		log.Logger.Error(err.Error())
 	}
-	for _, feed := range feeds {
-		db.AddRSSFeed(feed.Url)
+	for k, feed := range feeds {
+		feeds[k] = db.AddRSSFeed(feed.Url)
 	}
 	return feeds
 }
