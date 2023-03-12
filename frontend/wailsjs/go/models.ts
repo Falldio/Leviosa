@@ -56,6 +56,20 @@ export namespace db {
 	        this.starred = source["starred"];
 	    }
 	}
+	export class Tag {
+	    id: number;
+	    name: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Tag(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	    }
+	}
 
 }
 

@@ -1,17 +1,28 @@
 <script lang="ts" setup>
 import SidebarMenu from './components/SidebarMenu.vue'
 import { useStore } from 'vuex'
-import { GetFeeds } from '../wailsjs/go/main/App'
+import { FetchUpdatesForAllFeeds, GetFeeds } from '../wailsjs/go/main/App'
 import { useRouter, useRoute } from 'vue-router'
-import { onUnmounted } from 'vue'
+import { onUnmounted, onMounted } from 'vue'
 
 const store = useStore()
 const router = useRouter()
 const route = useRoute()
 
+// onMounted(() => {
+//   FetchUpdatesForAllFeeds().then(() => {
+//     alert("Updates fetched")
+//     GetFeeds().then((result) => {
+//       store.commit("setFeeds", result)
+//     })
+//   })
+// })
+// FetchUpdatesForAllFeeds().then(() => {
+// alert("Updates fetched")
 GetFeeds().then((result) => {
   store.commit("setFeeds", result)
 })
+// })
 
 const handleBackButton = () => {
   router.back()
