@@ -3,3 +3,4 @@ node_modules
 frontend/dist
 leviosa.db
 leviosa.log
+config.json
