@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/mmcdole/gofeed v1.2.1
-	github.com/wailsapp/wails/v2 v2.3.1
+	github.com/wailsapp/wails/v2 v2.4.0
 	go.deanishe.net/favicon v0.1.0
 	gopkg.in/gorp.v2 v2.2.0
 )
@@ -49,6 +49,7 @@ require (
 	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/text v0.8.0 // indirect
+	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 )
 
 // replace github.com/wailsapp/wails/v2 v2.3.1 => C:\Users\YoloKokura\go\pkg\mod
