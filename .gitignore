@@ -5,8 +5,6 @@ leviosa.db
 leviosa.log
 config.json
 .DS_Store
-node_modules/
-/dist/
 
 # local env files
 .env.local

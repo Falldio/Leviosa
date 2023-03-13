@@ -1,13 +1,14 @@
 <script lang="ts" setup>
-import SidebarMenu from './components/SidebarMenu.vue'
-import { useStore } from 'vuex'
-import { FetchUpdatesForAllFeeds, GetFeeds } from '../wailsjs/go/main/App'
-import { useRouter, useRoute } from 'vue-router'
-import { onUnmounted, onMounted } from 'vue'
+import SideView from "./views/SideView.vue";
+import FeedView from "./views/FeedView.vue";
+import { useStore } from "vuex";
+import { GetFeeds } from "../wailsjs/go/main/App";
+import { useRouter, useRoute } from "vue-router";
+import { onUnmounted } from "vue";
 
-const store = useStore()
-const router = useRouter()
-const route = useRoute()
+const store = useStore();
+const router = useRouter();
+const route = useRoute();
 
 // onMounted(() => {
 //   FetchUpdatesForAllFeeds().then(() => {
@@ -20,26 +21,24 @@ const route = useRoute()
 // FetchUpdatesForAllFeeds().then(() => {
 // alert("Updates fetched")
 GetFeeds().then((result) => {
-  store.commit("setFeeds", result)
-})
-// })
+  store.commit("setFeeds", result);
+});
 
 const handleBackButton = () => {
-  router.back()
-}
+  router.back();
+};
 
-window.addEventListener('popstate', handleBackButton)
+window.addEventListener("popstate", handleBackButton);
 
 onUnmounted(() => {
-  window.removeEventListener('popstate', handleBackButton)
-})
-
-
+  window.removeEventListener("popstate", handleBackButton);
+});
 </script>
 
 <template>
   <v-app>
-    <sidebar-menu />
+    <SideView />
+    <FeedView />
     <v-main>
       <router-view></router-view>
     </v-main>
