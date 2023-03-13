@@ -12,7 +12,7 @@ const (
 	logPath = "leviosa.log"
 )
 
-func InitLogger() {
+func init() {
 	Logger = logger.NewFileLogger(logPath)
 
 }

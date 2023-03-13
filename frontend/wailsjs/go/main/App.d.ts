@@ -4,6 +4,10 @@ import {db} from '../models';
 
 export function AddRSSFeed(arg1:string):Promise<db.Feed>;
 
+export function AddTags(arg1:number,arg2:Array<string>):Promise<void>;
+
+export function DeleteTagFromFeed(arg1:number,arg2:number):Promise<void>;
+
 export function ExportFeeds():Promise<void>;
 
 export function FetchUpdates(arg1:number):Promise<void>;
@@ -16,7 +20,11 @@ export function GetPost(arg1:number):Promise<db.Post>;
 
 export function GetPosts(arg1:number):Promise<Array<db.Post>>;
 
+export function GetTags():Promise<Array<db.Tag>>;
+
 export function ImportFeeds():Promise<Array<db.Feed>>;
+
+export function SearchFeedsByTags(arg1:number,arg2:Array<string>):Promise<Array<db.Feed>>;
 
 export function SetPinned(arg1:number,arg2:boolean):Promise<void>;
 

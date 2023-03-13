@@ -1,24 +1,45 @@
 package db
 
 import (
+	"Leviosa/pkg/config"
 	"Leviosa/pkg/log"
 	"database/sql"
+	"net/http"
+	"net/url"
 	"os"
 	"sort"
+	"strings"
 
 	"github.com/mmcdole/gofeed"
+	"go.deanishe.net/favicon"
 	"gopkg.in/gorp.v2"
 )
 
 var (
-	fp  *gofeed.Parser
-	dbm *gorp.DbMap
+	fp                  *gofeed.Parser
+	dbm                 *gorp.DbMap
+	proxyTransport      *http.Transport
+	iconFinder          *favicon.Finder
+	iconFinderWithProxy *favicon.Finder
 )
 
 const (
 	dbDriver = "sqlite3"
 	dbPath   = "leviosa.db"
 )
+
+const (
+	SearchModeAnd = iota
+	SearchModeOr
+)
+
+func init() {
+	proxy, _ := url.Parse(config.Config.ProxyUrl)
+	proxyTransport = &http.Transport{Proxy: http.ProxyURL(proxy)}
+	proxyClient := &http.Client{Transport: proxyTransport}
+	iconFinderWithProxy = favicon.New(favicon.WithClient(proxyClient))
+	iconFinder = favicon.New()
+}
 
 func InitDb() *gorp.DbMap {
 	fp = gofeed.NewParser()
@@ -28,9 +49,13 @@ func InitDb() *gorp.DbMap {
 	}
 	database, _ := sql.Open("sqlite3", dbPath)
 
+	log.Logger.Info("Initializing database")
+
 	dbm = &gorp.DbMap{Db: database, Dialect: gorp.SqliteDialect{}}
 	dbm.AddTableWithName(Feed{}, "feeds").SetKeys(true, "Id").AddIndex("FeedUrlIndex", "Btree", []string{"Url"}).SetUnique(true)
 	dbm.AddTableWithName(Post{}, "posts").SetKeys(true, "Id").AddIndex("PostUrlIndex", "Btree", []string{"Url"}).SetUnique(true)
+	dbm.AddTableWithName(Tag{}, "tags").SetKeys(true, "Id").AddIndex("TagNameIndex", "Btree", []string{"Name"}).SetUnique(true)
+	dbm.AddTableWithName(FeedTag{}, "feed_tags").AddIndex("FeedTagIdIndex", "Btree", []string{"FeedId", "TagId"})
 
 	// a.dbMap.TraceOn("[gorp]", log.New(os.Stdout, "leviosa:", log.Lmicroseconds))
 
@@ -44,9 +69,10 @@ func InitDb() *gorp.DbMap {
 	return dbm
 }
 
-func AddRSSFeed(url string) Feed {
-	fd, err := fp.ParseURL(url)
-	if err != nil {
+func AddRSSFeed(feedUrl string) Feed {
+	log.Logger.Debug("Adding feed: " + feedUrl)
+	fd := parseUrl(feedUrl)
+	if fd == nil {
 		return Feed{}
 	}
 	feed := newFeed(fd)
@@ -84,10 +110,8 @@ func FetchUpdatesForAllFeeds() {
 	var feeds []Feed
 	dbm.Select(&feeds, "select id, url from feeds")
 	for _, f := range feeds {
-		fd, err := fp.ParseURL(f.Url)
-		if err != nil {
-			log.Logger.Error(err.Error())
-		}
+		log.Logger.Debug("Fetching updates for feed: " + f.Url)
+		fd := parseUrl(f.Url)
 		newPosts(fd, f.Id)
 	}
 }
@@ -95,7 +119,8 @@ func FetchUpdatesForAllFeeds() {
 func FetchUpdates(feedId int64) {
 	feed := Feed{}
 	dbm.SelectOne(&feed, "select url from feeds where id = ?", feedId)
-	fd, _ := fp.ParseURL(feed.Url)
+	log.Logger.Debug("Fetching updates for feed: " + feed.Url)
+	fd := parseUrl(feed.Url)
 	newPosts(fd, feedId)
 }
 
@@ -122,4 +147,63 @@ func UnsubscribeFeed(feedId int64) {
 	for _, p := range posts {
 		dbm.Delete(&p)
 	}
+}
+
+func AddTags(feedId int64, tags ...string) {
+	for _, t := range tags {
+		tag := Tag{}
+		err := dbm.SelectOne(&tag, "select * from tags where name = ?", t)
+		if err != nil {
+			tag.Name = t
+			dbm.Insert(&tag)
+		}
+		feedTag := FeedTag{FeedId: feedId, TagId: tag.Id}
+		dbm.Insert(&feedTag)
+	}
+}
+
+func GetTags() []Tag {
+	var tags []Tag
+	dbm.Select(&tags, "select * from tags")
+	return tags
+}
+
+func DeleteTagFromFeed(feedId int64, tagId int64) {
+	dbm.Exec("delete from feed_tags where feed_id = ? and tag_id = ?", feedId, tagId)
+}
+
+func SearchFeedsByTags(mode int, tags ...string) []Feed {
+	var tagIds []interface{}
+	for _, t := range tags {
+		tag := Tag{}
+		err := dbm.SelectOne(&tag, "select * from tags where name = ?", t)
+		if err != nil {
+			log.Logger.Info("Tag not found: " + t)
+			return []Feed{}
+		}
+		tagIds = append(tagIds, tag.Id)
+	}
+	var feeds []Feed
+	if mode == SearchModeAnd {
+		dbm.Select(&feeds, "select f.* from feeds f, feed_tags ft where f.id = ft.feed_id and ft.tag_id in ("+strings.TrimRight(strings.Repeat("?,", len(tagIds)), ",")+") group by f.id having count(*) = ?", tagIds, len(tagIds))
+	} else if mode == SearchModeOr {
+		dbm.Select(&feeds, "select f.* from feeds f, feed_tags ft where f.id = ft.feed_id and ft.tag_id in ("+strings.TrimRight(strings.Repeat("?,", len(tagIds)), ",")+") group by f.id", tagIds)
+	}
+	return feeds
+}
+
+func parseUrl(feedUrl string) *gofeed.Feed {
+	fd, err := fp.ParseURL(feedUrl)
+	if err != nil {
+		log.Logger.Error(err.Error())
+		log.Logger.Info("Retrying with proxy")
+		fp.Client.Transport = proxyTransport
+		fd, err = fp.ParseURL(feedUrl)
+		fp.Client.Transport = nil
+		if err != nil {
+			log.Logger.Error(err.Error())
+			return nil
+		}
+	}
+	return fd
 }
