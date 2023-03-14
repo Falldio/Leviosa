@@ -1,5 +1,4 @@
 <template>
-  <FeedMenu></FeedMenu>
   <v-list-item @click="getPostList">
     <v-list-item-title class="left-align">{{ feed.title }}</v-list-item-title>
     <v-list-item-subtitle
@@ -12,7 +11,6 @@
 <script setup lang="ts">
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
-import FeedMenu from "./FeedMenu.vue";
 
 const props = defineProps(["feed"]);
 

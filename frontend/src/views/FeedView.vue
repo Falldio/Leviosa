@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-navigation-drawer permanent>
+      <FeedMenu></FeedMenu>
       <v-list lines="two">
         <feed-entry v-for="item in items" :key="item.id" :feed="item" />
       </v-list>
@@ -9,6 +10,7 @@
 </template>
 <script setup lang="ts">
 import FeedEntry from "../components/Feed/FeedEntry.vue";
+import FeedMenu from "../components/Feed/FeedMenu.vue";
 import { computed } from "vue";
 import { useStore } from "vuex";
 
