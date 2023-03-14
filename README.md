@@ -14,6 +14,7 @@ There're already many wonderful RSS Feed Readers on the mobile platform. However
 
 + A single, easy-to-use desktop application.
 + What you subscribe stays in your local device.
++ Support feed subscription via proxy.
 + Cross-platform thanks to [Wails](https://wails.io/)!
 
 ![Preview](img/preview.png)

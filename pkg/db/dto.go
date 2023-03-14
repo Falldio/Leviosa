@@ -41,3 +41,15 @@ type Post struct {
 	Read        bool   `db:"read" json:"read"`
 	Starred     bool   `db:"starred" json:"starred"`
 }
+
+// A Feed can have multiple tags. Untagged Feeds are also allowed.
+type Tag struct {
+	Id   int64  `db:"id, primarykey, autoincrement" json:"id"`
+	Name string `db:"name" json:"name"`
+}
+
+// FeedTag describes the many-to-many relation between Tags and Feeds
+type FeedTag struct {
+	TagId  int64 `db:"tag_id" json:"tag_id"`
+	FeedId int64 `db:"feed_id" json:"feed_id"`
+}

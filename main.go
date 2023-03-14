@@ -17,12 +17,11 @@ func main() {
 	// Create an instance of the app structure
 	app := NewApp()
 
-	log.InitLogger()
 	log.Logger.Info("Now running Leviosa!")
 
 	dbm := db.InitDb()
 	defer dbm.Db.Close()
-	go db.FetchUpdatesForAllFeeds()
+	// go db.FetchUpdatesForAllFeeds()
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:            "Leviosa",

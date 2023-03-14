@@ -61,11 +61,11 @@ func (a App) ExportFeeds() {
 		return
 	}
 	var feeds = db.GetFeeds()
-	file, _ := json.Marshal(feeds)
+	file, _ := json.MarshalIndent(feeds, "", "	")
 	os.WriteFile(exportPath, file, 0644)
 }
 
-// Import external subscription list, should be a valid JSON file
+// Import external subscription list, should be a valid JSON file with feed url.
 func (a App) ImportFeeds() []db.Feed {
 	options := runtime.OpenDialogOptions{
 		Title:   "Choose a JSON file to import",
@@ -79,12 +79,16 @@ func (a App) ImportFeeds() []db.Feed {
 		return []db.Feed{}
 	}
 	file, err := os.ReadFile(importPath)
-	log.Logger.Error(err.Error())
+	if err != nil {
+		log.Logger.Error(err.Error())
+	}
 	var feeds []db.Feed
 	err = json.Unmarshal(file, &feeds)
-	log.Logger.Error(err.Error())
-	for _, feed := range feeds {
-		db.AddRSSFeed(feed.Url)
+	if err != nil {
+		log.Logger.Error(err.Error())
+	}
+	for k, feed := range feeds {
+		feeds[k] = db.AddRSSFeed(feed.Url)
 	}
 	return feeds
 }
@@ -114,4 +118,32 @@ func (a App) SetPinned(feedId int64, pinned bool) {
 // Unsubscribe a feed
 func (a App) UnsubscribeFeed(feedId int64) {
 	db.UnsubscribeFeed(feedId)
+}
+
+// Add tag(s) of a feed
+func (a App) AddTags(feedId int64, tags ...string) {
+	db.AddTags(feedId, tags...)
+}
+
+// Get all tags, useful when suggesting existing tags
+func (a App) GetTags() []db.Tag {
+	return db.GetTags()
+}
+
+// Delete a tag from a feed
+func (a App) DeleteTagFromFeed(feedId int64, tagId int64) {
+	db.DeleteTagFromFeed(feedId, tagId)
+}
+
+// Search for feeds by tags
+// mode: 0 for AND, 1 for OR
+func (a App) SearchFeedsByTags(mode int, tags ...string) []db.Feed {
+	switch mode {
+	case 0:
+		return db.SearchFeedsByTags(db.SearchModeAnd, tags...)
+	case 1:
+		return db.SearchFeedsByTags(db.SearchModeOr, tags...)
+	default:
+		return []db.Feed{}
+	}
 }
