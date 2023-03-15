@@ -24,7 +24,7 @@ type Feed struct {
 	Image       string `db:"image" json:"image"`
 	Updated     int64  `db:"updated" json:"updated"`
 	Created     int64  `db:"created" json:"created"`
-	Unread      int64  `db:"-"`
+	Unread      int64  `db:"-" json:"unread"`
 	Pinned      bool   `db:"pinned" json:"pinned"`
 }
 
