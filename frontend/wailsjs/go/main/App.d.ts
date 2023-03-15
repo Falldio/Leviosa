@@ -6,7 +6,7 @@ export function AddRSSFeed(arg1:string):Promise<db.Feed>;
 
 export function AddTags(arg1:number,arg2:Array<string>):Promise<void>;
 
-export function DeleteTagFromFeed(arg1:number,arg2:number):Promise<void>;
+export function DeleteTagFromFeed(arg1:number,arg2:string):Promise<void>;
 
 export function ExportFeeds():Promise<void>;
 
@@ -27,6 +27,8 @@ export function ImportFeeds():Promise<Array<db.Feed>>;
 export function SearchFeedsByTags(arg1:number,arg2:Array<string>):Promise<Array<db.Feed>>;
 
 export function SetPinned(arg1:number,arg2:boolean):Promise<void>;
+
+export function SetRead(arg1:number,arg2:boolean):Promise<void>;
 
 export function SetStarred(arg1:number,arg2:boolean):Promise<void>;
 

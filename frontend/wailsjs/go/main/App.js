@@ -54,6 +54,10 @@ export function SetPinned(arg1, arg2) {
   return window['go']['main']['App']['SetPinned'](arg1, arg2);
 }
 
+export function SetRead(arg1, arg2) {
+  return window['go']['main']['App']['SetRead'](arg1, arg2);
+}
+
 export function SetStarred(arg1, arg2) {
   return window['go']['main']['App']['SetStarred'](arg1, arg2);
 }
