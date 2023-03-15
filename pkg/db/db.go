@@ -170,6 +170,7 @@ func GetTags() []Tag {
 
 func DeleteTagFromFeed(feedId int64, tagName string) {
 	dbm.Exec("delete from feed_tags where feed_id = ? and tag_id in (select id from tags where name = ?)", feedId, tagName)
+	dbm.Exec("delete from tags where id not in (select tag_id from feed_tags group by tag_id)")
 }
 
 func SearchFeedsByTags(mode int, tags ...string) []Feed {
