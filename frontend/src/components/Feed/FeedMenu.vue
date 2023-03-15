@@ -4,7 +4,7 @@
       <v-btn
         class="ma-0"
         variant="text"
-        icon="mdi-ship-wheel"
+        icon="mdi-text-search"
         size="small"
         color="red-lighten-2"
       ></v-btn>
@@ -39,22 +39,9 @@
 
 <script lang="ts" setup>
 import { useStore } from "vuex";
-import { ExportFeeds, ImportFeeds } from "../../../wailsjs/go/main/App";
+// import { ExportFeeds, ImportFeeds } from "../../../wailsjs/go/main/App";
 const store = useStore();
 type btnFunction = () => void;
-const addAction = (): void => {
-  console.log(1);
-  // store.commit("setAddRSSFeedDialog", true);
-};
-
-const exportAction = (): void => {
-  console.log(2);
-  ExportFeeds();
-};
-const importAction = (): void => {
-  console.log(3);
-  ImportFeeds().then((result) => store.commit("addFeeds", result));
-};
 
 interface item {
   name: string;
@@ -62,9 +49,9 @@ interface item {
   action: btnFunction;
 }
 const mainitems: item[] = [
-  { name: "Add New RSS Feed", icon: "mdi-book-plus", action: addAction },
-  { name: "Export Feeds", icon: "mdi-export-variant", action: exportAction },
-  { name: "Import Feeds", icon: "mdi-file-import", action: importAction },
+  // { name: "Add New RSS Feed", icon: "mdi-book-plus", action: addAction },
+  // { name: "Export Feeds", icon: "mdi-export-variant", action: exportAction },
+  // { name: "Import Feeds", icon: "mdi-file-import", action: importAction },
 ];
 
 const output = (something: any) => {

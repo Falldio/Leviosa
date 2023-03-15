@@ -9,7 +9,7 @@
         color="red-lighten-2"
       ></v-btn>
     </div>
-    <div v-for="(item, index) in mainitems" class="menu-main">
+    <div v-for="(item, index) in menuItems" class="menu-main">
       <div class="menu-main-item">
         <v-tooltip :text="item.name" location="top">
           <template v-slot:activator="{ props }">
@@ -43,7 +43,11 @@
 <script lang="ts" setup>
 import AddRSSFeedDialog from "./AddRSSFeedDialog.vue";
 import { useStore } from "vuex";
-import { ExportFeeds, ImportFeeds } from "../../../wailsjs/go/main/App";
+import {
+  ExportFeeds,
+  ImportFeeds,
+  FetchUpdatesForAllFeeds,
+} from "../../../wailsjs/go/main/App";
 
 const store = useStore();
 type btnFunction = () => void;
@@ -53,22 +57,28 @@ interface item {
   action: btnFunction;
 }
 const addAction = (): void => {
-  console.log(1);
   store.commit("setAddRSSFeedDialog", true);
 };
 
 const exportAction = (): void => {
-  console.log(2);
   ExportFeeds();
 };
 const importAction = (): void => {
-  console.log(3);
   ImportFeeds().then((result) => store.commit("addFeeds", result));
 };
-const mainitems: item[] = [
+
+const fetchUpdatesAction = (): void => {
+  console.log(FetchUpdatesForAllFeeds());
+};
+const menuItems: item[] = [
   { name: "Add New RSS Feed", icon: "mdi-book-plus", action: addAction },
   { name: "Export Feeds", icon: "mdi-export-variant", action: exportAction },
   { name: "Import Feeds", icon: "mdi-file-import", action: importAction },
+  {
+    name: "Fetch Updates",
+    icon: "mdi-reload",
+    action: fetchUpdatesAction,
+  },
 ];
 
 const output = (something: any) => {
