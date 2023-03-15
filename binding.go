@@ -131,8 +131,8 @@ func (a App) GetTags() []db.Tag {
 }
 
 // Delete a tag from a feed
-func (a App) DeleteTagFromFeed(feedId int64, tagId int64) {
-	db.DeleteTagFromFeed(feedId, tagId)
+func (a App) DeleteTagFromFeed(feedId int64, tagName string) {
+	db.DeleteTagFromFeed(feedId, tagName)
 }
 
 // Search for feeds by tags
@@ -146,4 +146,9 @@ func (a App) SearchFeedsByTags(mode int, tags ...string) []db.Feed {
 	default:
 		return []db.Feed{}
 	}
+}
+
+// Set a post as read/unread
+func (a App) SetRead(postId int64, read bool) {
+	db.SetRead(postId, read)
 }

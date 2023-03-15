@@ -168,8 +168,8 @@ func GetTags() []Tag {
 	return tags
 }
 
-func DeleteTagFromFeed(feedId int64, tagId int64) {
-	dbm.Exec("delete from feed_tags where feed_id = ? and tag_id = ?", feedId, tagId)
+func DeleteTagFromFeed(feedId int64, tagName string) {
+	dbm.Exec("delete from feed_tags where feed_id = ? and tag_id in (select id from tags where name = ?)", feedId, tagName)
 }
 
 func SearchFeedsByTags(mode int, tags ...string) []Feed {
@@ -206,4 +206,11 @@ func parseUrl(feedUrl string) *gofeed.Feed {
 		}
 	}
 	return fd
+}
+
+func SetRead(postId int64, read bool) {
+	post := Post{}
+	dbm.SelectOne(&post, "select * from posts where id = ?", postId)
+	post.Read = read
+	dbm.Update(&post)
 }
