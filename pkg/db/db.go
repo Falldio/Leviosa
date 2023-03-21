@@ -106,24 +106,6 @@ func GetPost(postId int64) Post {
 	return post
 }
 
-func FetchUpdatesForAllFeeds() {
-	var feeds []Feed
-	dbm.Select(&feeds, "select id, url from feeds")
-	for _, f := range feeds {
-		log.Logger.Debug("Fetching updates for feed: " + f.Url)
-		fd := parseUrl(f.Url)
-		newPosts(fd, f.Id)
-	}
-}
-
-func FetchUpdates(feedId int64) {
-	feed := Feed{}
-	dbm.SelectOne(&feed, "select url from feeds where id = ?", feedId)
-	log.Logger.Debug("Fetching updates for feed: " + feed.Url)
-	fd := parseUrl(feed.Url)
-	newPosts(fd, feedId)
-}
-
 func SetStarred(postId int64, starred bool) {
 	post := Post{}
 	dbm.SelectOne(&post, "select * from posts where id = ?", postId)
@@ -191,22 +173,6 @@ func SearchFeedsByTags(mode int, tags ...string) []Feed {
 		dbm.Select(&feeds, "select f.* from feeds f, feed_tags ft where f.id = ft.feed_id and ft.tag_id in ("+strings.TrimRight(strings.Repeat("?,", len(tagIds)), ",")+") group by f.id", tagIds)
 	}
 	return feeds
-}
-
-func parseUrl(feedUrl string) *gofeed.Feed {
-	fd, err := fp.ParseURL(feedUrl)
-	if err != nil {
-		log.Logger.Error(err.Error())
-		log.Logger.Info("Retrying with proxy")
-		fp.Client.Transport = proxyTransport
-		fd, err = fp.ParseURL(feedUrl)
-		fp.Client.Transport = nil
-		if err != nil {
-			log.Logger.Error(err.Error())
-			return nil
-		}
-	}
-	return fd
 }
 
 func SetRead(postId int64, read bool) {

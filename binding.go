@@ -78,19 +78,7 @@ func (a App) ImportFeeds() []db.Feed {
 	if importPath == "" {
 		return []db.Feed{}
 	}
-	file, err := os.ReadFile(importPath)
-	if err != nil {
-		log.Logger.Error(err.Error())
-	}
-	var feeds []db.Feed
-	err = json.Unmarshal(file, &feeds)
-	if err != nil {
-		log.Logger.Error(err.Error())
-	}
-	for k, feed := range feeds {
-		feeds[k] = db.AddRSSFeed(feed.Url)
-	}
-	return feeds
+	return db.ImportFeeds(importPath)
 }
 
 // Fetch possible updates for all feeds
@@ -102,7 +90,7 @@ func (a App) FetchUpdatesForAllFeeds() {
 
 // Fetch updates for a single RSS Feed
 func (a App) FetchUpdates(feedId int64) {
-	db.FetchUpdates(feedId)
+	db.FetchUpdatesForFeed(feedId)
 }
 
 // Star/Unstar a post

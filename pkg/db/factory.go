@@ -21,8 +21,10 @@ func newFeed(fd *gofeed.Feed) Feed {
 	} else {
 		feed.Image = newImage(fd)
 	}
-	if fd.UpdatedParsed != nil {
-		feed.Updated = fd.UpdatedParsed.UnixMicro()
+	if fd.PublishedParsed != nil {
+		feed.Updated = fd.PublishedParsed.UnixMicro()
+	} else {
+		feed.Updated = time.Now().UnixMicro()
 	}
 	feed.Created = time.Now().UnixMicro()
 
@@ -56,13 +58,19 @@ func newPosts(feed *gofeed.Feed, feedId int64) []Post {
 		if post.Content == "" {
 			post.Content = post.Description
 		}
-		if item.UpdatedParsed != nil {
+		if item.PublishedParsed != nil {
 			post.Updated = item.PublishedParsed.UnixMicro()
+		} else {
+			post.Updated = time.Now().UnixMicro()
 		}
 		var author string = feed.Title
-		if item.Author != nil {
-			author = item.Author.Name
+		if len(item.Authors) > 0 {
+			author = ""
 		}
+		for _, a := range item.Authors {
+			author += a.Name + ", "
+		}
+		author = author[:len(author)-2]
 		post.Author = author
 		err := dbm.Insert(post)
 		if err != nil {
@@ -88,4 +96,20 @@ func newImage(feed *gofeed.Feed) string {
 		}
 	}
 	return icons[0].URL
+}
+
+func parseUrl(feedUrl string) *gofeed.Feed {
+	fd, err := fp.ParseURL(feedUrl)
+	if err != nil {
+		log.Logger.Error(err.Error())
+		log.Logger.Info("Retrying with proxy")
+		fp.Client.Transport = proxyTransport
+		fd, err = fp.ParseURL(feedUrl)
+		fp.Client.Transport = nil
+		if err != nil {
+			log.Logger.Error(err.Error())
+			return nil
+		}
+	}
+	return fd
 }
