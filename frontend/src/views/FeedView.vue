@@ -3,7 +3,12 @@
     <v-navigation-drawer permanent>
       <FeedMenu></FeedMenu>
       <v-list lines="two">
-        <feed-entry v-for="item in items" :key="item.id" :feed="item" />
+        <feed-entry
+          v-for="(item, index) in items"
+          :key="item"
+          :index="index"
+          :feed="item"
+        />
       </v-list>
     </v-navigation-drawer>
   </div>
@@ -22,6 +27,8 @@ const items = computed(() => {
       title: feed.title,
       description: feed.description,
       icon: feed.image,
+      unread: feed.unread,
+      pinned: feed.pinned,
     };
   });
 });
