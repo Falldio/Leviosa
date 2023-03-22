@@ -36,6 +36,10 @@ func FetchUpdatesForFeed(feedId int64) {
 	dbm.SelectOne(&feed, "select url from feeds where id = ?", feedId)
 	log.Logger.Debug("Fetching updates for feed: " + feed.Url)
 	fd := parseUrl(feed.Url)
+	if fd == nil {
+		log.Logger.Error("Failed to parse feed: " + feed.Url)
+		return
+	}
 	var updateTime int64
 	if fd.PublishedParsed != nil {
 		updateTime = fd.PublishedParsed.Unix()
