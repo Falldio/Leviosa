@@ -75,9 +75,9 @@ func newPosts(feed *gofeed.Feed, feedId int64) []Post {
 		err := dbm.Insert(post)
 		if err != nil {
 			log.Logger.Info(err.Error())
-			post.Read = true
+		} else {
+			posts = append(posts, *post)
 		}
-		posts = append(posts, *post)
 	}
 	return posts
 }

@@ -4,6 +4,7 @@ import (
 	"Leviosa/pkg/log"
 	"encoding/json"
 	"os"
+	"sort"
 )
 
 const (
@@ -23,6 +24,7 @@ func FetchUpdatesForAllFeeds() {
 		jobs <- f.Id
 	}
 	close(jobs)
+	log.Logger.Info("Fetching Updates Finished!")
 }
 
 func fetchUpdatesBatch(jobs <-chan int64) {
@@ -33,23 +35,25 @@ func fetchUpdatesBatch(jobs <-chan int64) {
 
 func FetchUpdatesForFeed(feedId int64) {
 	feed := Feed{}
-	dbm.SelectOne(&feed, "select url from feeds where id = ?", feedId)
+	dbm.SelectOne(&feed, "select * from feeds where id = ?", feedId)
 	log.Logger.Debug("Fetching updates for feed: " + feed.Url)
 	fd := parseUrl(feed.Url)
 	if fd == nil {
 		log.Logger.Error("Failed to parse feed: " + feed.Url)
 		return
 	}
-	var updateTime int64
-	if fd.PublishedParsed != nil {
-		updateTime = fd.PublishedParsed.Unix()
-	} else if fd.UpdatedParsed != nil {
-		updateTime = fd.UpdatedParsed.Unix()
+	posts := newPosts(fd, feedId)
+	if len(posts) != 0 {
+		sort.Slice(posts, func(i, j int) bool {
+			return posts[i].Updated > posts[j].Updated
+		})
+		log.Logger.Debug("New posts: " + posts[0].Title)
+		feed.Updated = posts[0].Updated
 	}
-	if updateTime > feed.Updated {
-		feed.Updated = updateTime
-		dbm.Update(&feed)
-		newPosts(fd, feedId)
+	_, err := dbm.Update(&feed)
+	if err != nil {
+		log.Logger.Error(feed.Title)
+		log.Logger.Error(err.Error())
 	}
 }
 
